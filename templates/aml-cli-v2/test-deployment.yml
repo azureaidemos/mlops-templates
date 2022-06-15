@@ -3,6 +3,9 @@ parameters:
     type: string
   - name: sample_request
     type: string
+  - name: request_type
+    type: string
+
 
 steps:
   - task: AzureCLI@2
@@ -10,23 +13,24 @@ steps:
     inputs: 
       azureSubscription: $(ado_service_connection_rg) #needs to have access at the RG level 
       scriptType: bash
-      workingDirectory: '$(System.DefaultWorkingDirectory)'
+      workingDirectory: $(System.DefaultWorkingDirectory)
       scriptLocation: inlineScript
       inlineScript: |
         set -e
-        RESPONSE=$(az ml $(endpoint_type)-endpoint invoke -n $(endpoint_name) --deployment ${{ parameters.deployment_name }} --request-file ${{ parameters.sample_request }})
+        RESPONSE=$(az ml $(endpoint_type)-endpoint invoke -n $(endpoint_name) --deployment-name ${{ parameters.deployment_name }} --request-file ${{ parameters.sample_request }})
         echo $RESPONSE
     condition: and(succeeded(), eq(variables['endpoint_type'], 'online'))
+    
   - task: AzureCLI@2
     displayName: Test deployment
     inputs: 
       azureSubscription: $(ado_service_connection_rg) #needs to have access at the RG level 
       scriptType: bash
-      workingDirectory: '$(System.DefaultWorkingDirectory)'
+      workingDirectory: $(System.DefaultWorkingDirectory)
       scriptLocation: inlineScript
       inlineScript: |
-        JOB_NAME=$(az ml $(endpoint_type)-endpoint invoke --name $(endpoint_name) --deployment-name ${{ parameters.deployment_name }} --input-path ${{ parameters.sample_request }} --query name -o tsv)
-
+        set -e
+        JOB_NAME=$(az ml $(endpoint_type)-endpoint invoke --name $(endpoint_name) --deployment-name ${{ parameters.deployment_name }} --input ${{ parameters.sample_request }} --input-type ${{ parameters.request_type }} --query name -o tsv)
         az ml job show -n $JOB_NAME --web
         az ml job stream -n $JOB_NAME
 

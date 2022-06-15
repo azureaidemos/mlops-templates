@@ -1,3 +1,7 @@
+parameters:
+  - name: pipeline_file
+    type: string
+    
 steps:
   - task: AzureCLI@2
     displayName: Run Azure ML pipeline
@@ -5,10 +9,12 @@ steps:
     inputs: 
       azureSubscription: $(ado_service_connection_rg) #needs to have access at the RG level 
       scriptType: bash
-      workingDirectory: '$(System.DefaultWorkingDirectory)/data-science'
+
+      workingDirectory: $(System.DefaultWorkingDirectory)
+
       scriptLocation: inlineScript
       inlineScript: |
-        run_id=$(az ml job create -f pipeline.yml --query name -o tsv)
+        run_id=$(az ml job create -f ${{ parameters.pipeline_file }} --query name -o tsv)
         if [[ -z "$run_id" ]]
         then
           echo "Job creation failed"
