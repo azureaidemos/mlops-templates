@@ -11,4 +11,4 @@ steps:
       scriptType: bash
       scriptLocation: inlineScript
       inlineScript:
-        az ml $(endpoint_type)-endpoint create --name taxi-fare-endpoint7458 --endpoint taxi-fare-endpoint7458 -f ${{ parameters.endpoint_file }}
+        az ml $(endpoint_type)-endpoint create --name taxi-fare-endpoint7459 -f ${{ parameters.endpoint_file }}
