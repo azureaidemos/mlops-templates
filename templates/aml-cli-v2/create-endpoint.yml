@@ -11,12 +11,4 @@ steps:
       scriptType: bash
       scriptLocation: inlineScript
       inlineScript: |
-        ENDPOINT_EXISTS=$(az ml $(endpoint_type)-endpoint list -o tsv --query "[?name=='$(endpoint_name)'][name]" | wc -l)
-        echo $ENDPOINT_NAME $ENDPOINT_EXISTS
-        az ml $(endpoint_type)-endpoint list -o tsv
-
-        if [[ ENDPOINT_EXISTS -ne 1 ]]; then
-            az ml $(endpoint_type)-endpoint create --name $(endpoint_name) -f ${{ parameters.endpoint_file }}
-        else
-            echo "Endpoint exists"
-        fi
+      az ml $(endpoint_type)-endpoint create --name $(endpoint_name) -f ${{ parameters.endpoint_file }}
