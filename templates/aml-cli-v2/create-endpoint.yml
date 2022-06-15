@@ -10,5 +10,5 @@ steps:
       azureSubscription: $(ado_service_connection_rg) #needs to have access at the RG level 
       scriptType: bash
       scriptLocation: inlineScript
-      inlineScript: |
-      az ml $(endpoint_type)-endpoint create --name $(endpoint_name) -f ${{ parameters.endpoint_file }}
+      inlineScript:
+        az ml $(endpoint_type)-endpoint create --name $(endpoint_name) -f ${{ parameters.endpoint_file }}
